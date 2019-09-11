@@ -1,0 +1,37 @@
+language: julia
+os:
+  - linux
+julia:
+  - 1.0
+notifications:
+  email: false
+git:
+  depth: 99999999
+cache:
+  timeout: 1000
+  directories:
+    - downloads
+env:
+  global:
+    - BINARYBUIDLER_DOWNLOADS_CACHE=downloads
+    - BINARYBUILDER_AUTOMATIC_APPLE=true
+sudo: required
+
+before_script:
+  julia -e 'import Pkg; Pkg.add.(["BinaryBuilder", "BinaryProvider"]); Pkg.build()'
+
+script:
+  - julia build_tarballs.jl
+
+deploy:
+    provider: releases
+    api_key:
+        # Note; this api_key is only valid for sisl/CUDDBuilder; you need
+        # to make your own: https://docs.travis-ci.com/user/deployment/releases/
+        secure: gYL57qcbgYJ43Vygz/THbbx+oGM+SIG5SMNPvbvqL4Fyk/yZblu9SWv8Rj6wFam/LaKlP53Xa7L4BtLs6WlsZiwIolVNtn/p76WckJoh/n+bILL94tV0mZfQcxRrTlk5vJdXlMpAq7h7ppY3MYX0EqEfTGhYcbcYHSlPYHKTUO2jWGp0qIj+YGlZMiEqDpwuR94dWcELDc8QeWLTsSORw4rji+wSl3jsCFwdEtrMAtxlg5z8XPgZznNNHmrDD0bsAME1yUMp9TQu53lesTwqNLSCWFaOlU99CNb7AQ03sqn9Dm/Rxr11MgBO23Js5SF2yXGehS0aEXYpMotNTHHsVmf2KpVgKSPjkzFBLvKhatACofnd3gU/NrH0n5OgetadLZny61WexkvIKTEG2i/5gouhG4+XKfm353oXlfFF5YnGvGxXN+Lp/fxW5/MCj3tedGbmJ5XlzqpD9AZZEPbs6l2MwIAZ23j9t8x0WgLGJv4DngIgXNs0lGJU9I6jMGxBIDpBmDqCpGYjSMtdiPgYMQ72Eibs3uT7N2kHUgq32WxzHmU8u9YugmwI69S3cg6WTCbhxZZ8RSlO8qI0YjGPlsJC56FXtWyUDW+YY4uYGTYTqlg41XBVTWxa90TjHWYlmN0AWP0gVtvmBsQtdsSCErBStAZhQi9Hv76765/yXOo=
+    file_glob: true
+    file: products/*
+    skip_cleanup: true
+    on:
+        repo: sisl/CUDDBuilder
+        tags: true
